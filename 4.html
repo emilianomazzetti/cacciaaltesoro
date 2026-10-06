@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>ESERCIZIO 7</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; text-transform: uppercase; }
+        .card { background: white; padding: 20px; border: 1px solid #ccc; max-width: 600px; }
+        button { background-color: #007bff; color: white; border: none; padding: 10px 20px; font-weight: bold; cursor: pointer; }
+        .result { margin-top: 15px; font-weight: bold; font-size: 1.2em; }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>ESERCIZIO 7: LE MURA CICLOPICHE</h2>
+        <p>PERCHÉ LE MURA DI MICENE ERANO DETTE CICLOPICHE?</p>
+        <p><input type="radio" name="mura" value="w1"> PERCHÉ ERANO STATI I CICLOPI A DISTRUGGERLE DURANTE UNA GUERRA.</p>
+        <p><input type="radio" name="mura" value="c"> PERCHÉ SECONDO LA LEGGENDA ERANO STATI I CICLOPI (GIGANTI CON UN SOLO OCCHIO) A COSTRUIRLE SPOSTANDO ENORMI PIETRE.</p>
+        <p><input type="radio" name="mura" value="w2"> PERCHÉ SERVIVANO A PROTEGGERE I CICLOPI DALL'ATTACCO DEI NEMICI.</p>
+        <button onclick="check()">VERIFICA</button>
+        <p id="res" class="result"></p>
+    </div>
+
+    <script>
+        function playAudio(isCorrect) {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            if (isCorrect) {
+                const now = ctx.currentTime;
+                const osc1 = ctx.createOscillator();
+                const osc2 = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc1.type = 'sine';
+                osc2.type = 'sine';
+                osc1.frequency.setValueAtTime(523.25, now);
+                osc2.frequency.setValueAtTime(659.25, now + 0.15);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+                osc1.connect(gain);
+                osc2.connect(gain);
+                gain.connect(ctx.destination);
+                osc1.start(now);
+                osc1.stop(now + 0.15);
+                osc2.start(now + 0.15);
+                osc2.stop(now + 0.5);
+            } else {
+                const now = ctx.currentTime;
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.linearRampToValueAtTime(80, now + 0.4);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.4);
+            }
+        }
+
+        function check() {
+            let val = document.querySelector('input[name="mura"]:checked')?.value;
+            let res = document.getElementById('res');
+
+            if(val === 'c') {
+                playAudio(true);
+                res.className = "result success";
+                res.innerText = "CORRETTO! ECCO LA SETTIMA LETTERA DELLA PAROLA SEGRETA: N";
+            } else {
+                playAudio(false);
+                res.className = "result error";
+                res.innerText = "INCORRETTO! LEGGI LA SCHEDA DEDICATA ALLE MURA CICLOPICHE.";
+            }
+        }
+    </script>
+</body>
+</html>

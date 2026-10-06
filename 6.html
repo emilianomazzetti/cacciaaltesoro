@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>ESERCIZIO 3</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; text-transform: uppercase; }
+        .card { background: #fff; padding: 20px; border: 1px solid #ccc; max-width: 600px; }
+        input[type="text"] { width: 140px; padding: 5px; text-transform: uppercase; }
+        button { background-color: #007bff; color: white; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold; }
+        .result { margin-top: 15px; font-weight: bold; font-size: 1.2em; }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>ESERCIZIO 3: RELIGIONE E CULTO DEI DEFUNTI</h2>
+        <p>I MICENEI ERANO <input type="text" id="gap1"> PERCHÉ ADORAVANO MOLTE DIVINITÀ. LA LORO DIVINITÀ PRINCIPALE ERA LA DEA <input type="text" id="gap2">. CREDEVANO NELLA VITA DOPO LA MORTE E SEPPELLIVANO I DEFUNTI CON IL LORO <input type="text" id="gap3"> FUNEBRE.</p>
+        <button onclick="check()">VERIFICA</button>
+        <p id="msg" class="result"></p>
+    </div>
+
+    <script>
+        function playAudio(isCorrect) {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            if (isCorrect) {
+                const now = ctx.currentTime;
+                const osc1 = ctx.createOscillator();
+                const osc2 = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc1.type = 'sine';
+                osc2.type = 'sine';
+                osc1.frequency.setValueAtTime(523.25, now);
+                osc2.frequency.setValueAtTime(659.25, now + 0.15);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+                osc1.connect(gain);
+                osc2.connect(gain);
+                gain.connect(ctx.destination);
+                osc1.start(now);
+                osc1.stop(now + 0.15);
+                osc2.start(now + 0.15);
+                osc2.stop(now + 0.5);
+            } else {
+                const now = ctx.currentTime;
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.linearRampToValueAtTime(80, now + 0.4);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.4);
+            }
+        }
+
+        function check() {
+            let g1 = document.getElementById('gap1').value.trim().toUpperCase();
+            let g2 = document.getElementById('gap2').value.trim().toUpperCase();
+            let g3 = document.getElementById('gap3').value.trim().toUpperCase();
+            let msg = document.getElementById('msg');
+
+            if(g1 === 'POLITEISTI' && g2 === 'MADRE' && g3 === 'CORREDO') {
+                playAudio(true);
+                msg.className = "result success";
+                msg.innerText = "EXCELLENTE! ECCO LA TERZA LETTERA DELLA PAROLA SEGRETA: A";
+            } else {
+                playAudio(false);
+                msg.className = "result error";
+                msg.innerText = "ATTENZIONE! COMPLETA CORRETTAMENTE TUTTI I CAMPI (SUGGERIMENTO: POLITEISTI, MADRE, CORREDO).";
+            }
+        }
+    </script>
+</body>
+</html>

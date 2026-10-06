@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>ESERCIZIO 2</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; background-color: #f4f7f6; text-transform: uppercase; }
+        .card { background: white; padding: 20px; border-radius: 8px; max-width: 600px; }
+        .q { margin-bottom: 15px; }
+        select { padding: 5px; text-transform: uppercase; }
+        button { background-color: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; }
+        .result { margin-top: 15px; font-weight: bold; font-size: 1.2em; }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>ESERCIZIO 2: LA STRUTTURA DELLA CITTÀ-FORTEZZA</h2>
+        <div class="q">
+            <p>1. COME SI CHIAMAVA LA PARTE PIÙ ALTA DELLA CITTÀ DOVE SI TROVAVANO IL PALAZZO REALE E GLI EDIFICI SACRI?</p>
+            <select id="q1">
+                <option value="">-- SELEZIONA --</option>
+                <option value="wrong1">CISTERNA</option>
+                <option value="correct">ACROPOLI</option>
+                <option value="wrong2">TUMULO</option>
+            </select>
+        </div>
+        <div class="q">
+            <p>2. DOVE SI TROVAVANO LE ABITAZIONI DELLA POPOLAZIONE COMUNE?</p>
+            <select id="q2">
+                <option value="">-- SELEZIONA --</option>
+                <option value="wrong1">ALL'INTERNO DEL PALAZZO REALE</option>
+                <option value="correct">FUORI DALLA CITTÀ-FORTEZZA</option>
+                <option value="wrong2">SULLE MURA CICLOPICHE</option>
+            </select>
+        </div>
+        <button onclick="check()">VERIFICA</button>
+        <p id="res" class="result"></p>
+    </div>
+
+    <script>
+        function playAudio(isCorrect) {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            if (isCorrect) {
+                const now = ctx.currentTime;
+                const osc1 = ctx.createOscillator();
+                const osc2 = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc1.type = 'sine';
+                osc2.type = 'sine';
+                osc1.frequency.setValueAtTime(523.25, now);
+                osc2.frequency.setValueAtTime(659.25, now + 0.15);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+                osc1.connect(gain);
+                osc2.connect(gain);
+                gain.connect(ctx.destination);
+                osc1.start(now);
+                osc1.stop(now + 0.15);
+                osc2.start(now + 0.15);
+                osc2.stop(now + 0.5);
+            } else {
+                const now = ctx.currentTime;
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.linearRampToValueAtTime(80, now + 0.4);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.4);
+            }
+        }
+
+        function check() {
+            let q1 = document.getElementById('q1').value;
+            let q2 = document.getElementById('q2').value;
+            let res = document.getElementById('res');
+
+            if(q1 === 'correct' && q2 === 'correct') {
+                playAudio(true);
+                res.className = "result success";
+                res.innerText = "CORRETTO! ECCO LA SECONDA LETTERA DELLA PAROLA SEGRETA: G";
+            } else {
+                playAudio(false);
+                res.className = "result error";
+                res.innerText = "INCORRETTO! CONTROLLA MEGLIO DOVE SORGEVA L'ACROPOLI E DOVE VIVEVA LA POPOLAZIONE.";
+            }
+        }
+    </script>
+</body>
+</html>

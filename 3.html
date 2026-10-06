@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>ESERCIZIO 8</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; text-transform: uppercase; }
+        .card { background: white; padding: 20px; border: 1px solid #ccc; max-width: 600px; }
+        button { background-color: #007bff; color: white; border: none; padding: 10px 20px; font-weight: bold; cursor: pointer; }
+        .result { margin-top: 15px; font-weight: bold; font-size: 1.2em; }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>ESERCIZIO 8: ARTIGIANATO E SPIRITO GUERRIERO</h2>
+        <p>QUALI ERANO I DUE SOGGETTI PREFERITI DAGLI ARTISTI MICENEI NELLE DECORAZIONI DI ARMI E OGGETTI?</p>
+        <p><input type="checkbox" id="c1"> LA CACCIA</p>
+        <p><input type="checkbox" id="c2"> IL COMMERCIO MARITTIMO</p>
+        <p><input type="checkbox" id="c3"> LA GUERRA</p>
+        <p><input type="checkbox" id="c4"> L'AGRICOLTURA</p>
+        <button onclick="check()">VERIFICA</button>
+        <p id="out" class="result"></p>
+    </div>
+
+    <script>
+        function playAudio(isCorrect) {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            if (isCorrect) {
+                const now = ctx.currentTime;
+                const osc1 = ctx.createOscillator();
+                const osc2 = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc1.type = 'sine';
+                osc2.type = 'sine';
+                osc1.frequency.setValueAtTime(523.25, now);
+                osc2.frequency.setValueAtTime(659.25, now + 0.15);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+                osc1.connect(gain);
+                osc2.connect(gain);
+                gain.connect(ctx.destination);
+                osc1.start(now);
+                osc1.stop(now + 0.15);
+                osc2.start(now + 0.15);
+                osc2.stop(now + 0.5);
+            } else {
+                const now = ctx.currentTime;
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.linearRampToValueAtTime(80, now + 0.4);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.4);
+            }
+        }
+
+        function check() {
+            let c1 = document.getElementById('c1').checked;
+            let c2 = document.getElementById('c2').checked;
+            let c3 = document.getElementById('c3').checked;
+            let c4 = document.getElementById('c4').checked;
+            let out = document.getElementById('out');
+
+            if(c1 && c3 && !c2 && !c4) {
+                playAudio(true);
+                out.className = "result success";
+                out.innerText = "CORRETTO! ECCO L'OTTAVA LETTERA DELLA PAROLA SEGRETA: O";
+            } else {
+                playAudio(false);
+                out.className = "result error";
+                out.innerText = "ERRORE! SELEZIONA SOLO I DUE SOGGETTI INDICATI NEL TESTO PER GLI ARTISTI MICENEI.";
+            }
+        }
+    </script>
+</body>
+</html>
